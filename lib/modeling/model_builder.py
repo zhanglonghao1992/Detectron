@@ -142,7 +142,7 @@ def get_func(func_name):
         parts = func_name.split('.')
         # Refers to a function in this module
         if len(parts) == 1:
-            return globals()[parts[0]]
+            return globals()[parts[0]]       # globals()以字典类型返回当前位置的全部全局变量    例：如果parts[0]为‘generalized_rcnn’，则调用generalized_rcnn（）函数
         # Otherwise, assume we're referencing a module under modeling
         module_name = 'modeling.' + '.'.join(parts[:-1])
         module = importlib.import_module(module_name)
