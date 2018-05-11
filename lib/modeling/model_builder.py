@@ -275,7 +275,7 @@ def _add_roi_mask_head(
 ):
     """Add a mask prediction head to the model."""
     # Capture model graph before adding the mask head
-    bbox_net = copy.deepcopy(model.net.Proto())
+    bbox_net = copy.deepcopy(model.net.Proto())        # 把加入mask head之前的net拷贝，作为bbox_net
     # Add the mask head
     blob_mask_head, dim_mask_head = add_roi_mask_head_func(
         model, blob_in, dim_in, spatial_scale_in
@@ -285,15 +285,15 @@ def _add_roi_mask_head(
         model, blob_mask_head, dim_mask_head
     )
 
-    if not model.train:  # == inference                                            # ？？？？？？？？？？？？？？？？？？？
+    if not model.train:  # == inference                仅在测试阶段！！！
         # Inference uses a cascade of box predictions, then mask predictions.
         # This requires separate nets for box and mask prediction.
         # So we extract the mask prediction net, store it as its own network,
         # then restore model.net to be the bbox-only network
-        model.mask_net, blob_mask = c2_utils.SuffixNet(
+        model.mask_net, blob_mask = c2_utils.SuffixNet(                   # 在bbox_net的基础上加入的那部分单独拿出来，作为mask_net
             'mask_net', model.net, len(bbox_net.op), blob_mask
         )
-        model.net._net = bbox_net
+        model.net._net = bbox_net          # 只将bbox_net作为model的net
         loss_gradients = None
     else:
         loss_gradients = mask_rcnn_heads.add_mask_rcnn_losses(model, blob_mask)
