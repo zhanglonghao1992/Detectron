@@ -179,7 +179,7 @@ def build_generic_detection_model(
         if not model.train:  # == inference
             # Create a net that can be used to execute the conv body on an image
             # (without also executing RPN or any other network heads)
-            model.conv_body_net = model.net.Clone('conv_body_net')
+            model.conv_body_net = model.net.Clone('conv_body_net')        # 将目前的model中的net克隆下来，叫做'conv_body_net'     
 
         head_loss_gradients = {
             'rpn': None,
